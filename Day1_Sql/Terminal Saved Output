@@ -1,0 +1,494 @@
+Last login: Fri Jan 13 12:31:44 on ttys000
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+L-VYKJY6J12D:~ marutikameshwar$ /Library/PostgreSQL/15/scripts/runpsql.sh; exit
+Server [localhost]: 
+Database [postgres]: 
+Port [5432]: 
+Username [postgres]: 
+Password for user postgres: 
+psql (15.1)
+Type "help" for help.
+
+postgres=# create database finservdb;
+CREATE DATABASE
+postgres=# /list
+postgres-# \list
+                                            List of databases
+   Name    |  Owner   | Encoding | Collate | Ctype | ICU Locale | Locale Provider |   Access privileges   
+-----------+----------+----------+---------+-------+------------+-----------------+-----------------------
+ finservdb | postgres | UTF8     | C       | C     |            | libc            | 
+ postgres  | postgres | UTF8     | C       | C     |            | libc            | 
+ template0 | postgres | UTF8     | C       | C     |            | libc            | =c/postgres          +
+           |          |          |         |       |            |                 | postgres=CTc/postgres
+ template1 | postgres | UTF8     | C       | C     |            | libc            | =c/postgres          +
+           |          |          |         |       |            |                 | postgres=CTc/postgres
+(4 rows)
+
+postgres-# \c finservdb
+You are now connected to database "finservdb" as user "postgres".
+        ^
+finservdb=# create table tbtest(eid INT PRIMARY KEY NOT NULL,ename TEXT NOT NULL,salary REAL);
+CREATE TABLE
+finservdb=# \d
+         List of relations
+ Schema |  Name  | Type  |  Owner   
+--------+--------+-------+----------
+ public | tbtest | table | postgres
+(1 row)
+
+finservdb=# \d finservdb
+Did not find any relation named "finservdb".
+finservdb=# \d tbtest 
+               Table "public.tbtest"
+ Column |  Type   | Collation | Nullable | Default 
+--------+---------+-----------+----------+---------
+ eid    | integer |           | not null | 
+ ename  | text    |           | not null | 
+ salary | real    |           |          | 
+Indexes:
+    "tbtest_pkey" PRIMARY KEY, btree (eid)
+
+finservdb=# create table employee( eid INT PRIMARY KEY NOT NULL,ename TEXT NOT NULL ,salary REAL);
+CREATE TABLE
+finservdb=# \d 
+          List of relations
+ Schema |   Name   | Type  |  Owner   
+--------+----------+-------+----------
+ public | employee | table | postgres
+ public | tbtest   | table | postgres
+(2 rows)
+
+finservdb=# \d employee
+              Table "public.employee"
+ Column |  Type   | Collation | Nullable | Default 
+--------+---------+-----------+----------+---------
+ eid    | integer |           | not null | 
+ ename  | text    |           | not null | 
+ salary | real    |           |          | 
+Indexes:
+    "employee_pkey" PRIMARY KEY, btree (eid)
+
+finservdb=# insert into employee(eid,ename,salary) values( 101,'sachin',60);
+INSERT 0 1                                                   ^
+finservdb=# insert into employee(eid,ename,salary) values( 102, 'rashi', 70);
+INSERT 0 1
+finservdb=# insert into employee(eid,ename,salary) values( 102, 'maruti', 1000);
+ERROR:  duplicate key value violates unique constraint "employee_pkey"
+DETAIL:  Key (eid)=(102) already exists.
+finservdb=# insert into employee(eid,ename,salary) values( 103, 'maruti', 1000);
+INSERT 0 1
+finservdb=# select * from employee
+finservdb-# 
+finservdb=# select*from employee;
+ eid | ename  | salary 
+-----+--------+--------
+ 101 | sachin |     60
+ 102 | rashi  |     70
+ 103 | maruti |   1000
+(3 rows)
+
+finservdb=# select*from employee;
+ eid | ename  | salary 
+-----+--------+--------
+ 101 | sachin |     60
+ 102 | rashi  |     70
+ 103 | maruti |   1000
+(3 rows)
+
+finservdb=# select*from employee;
+ eid | ename  | salary 
+-----+--------+--------
+ 101 | sachin |     60
+ 102 | rashi  |     70
+ 103 | maruti |   1000
+(3 rows)
+
+finservdb=# insert into employee (eid, ename, salary) values (104,'koushiq',80),(105,'rohit',80),(106,'jaideep',90);
+INSERT 0 3
+finservdb=# select*from employee;
+ eid |  ename  | salary 
+-----+---------+--------
+ 101 | sachin  |     60
+ 102 | rashi   |     70
+ 103 | maruti  |   1000
+ 104 | koushiq |     80
+ 105 | rohit   |     80
+ 106 | jaideep |     90
+(6 rows)                        ^
+finservdb=# update employee set ename='krishna' where eid=101;
+UPDATE 1
+finservdb=# select*from employee;
+ eid |  ename  | salary 
+-----+---------+--------
+ 102 | rashi   |     70
+ 103 | maruti  |   1000
+ 104 | koushiq |     80
+ 105 | rohit   |     80
+ 106 | jaideep |     90
+ 101 | krishna |     60
+(6 rows)
+
+finservdb=# delete from employee where eid='102';
+DELETE 1
+finservdb=# select*from employee;
+ eid |  ename  | salary 
+-----+---------+--------
+ 103 | maruti  |   1000
+ 104 | koushiq |     80
+ 105 | rohit   |     80
+ 106 | jaideep |     90
+ 101 | krishna |     60
+(5 rows)
+
+finservdb=# alter table tbtest rename to office;
+ALTER TABLE
+finservdb=# select*from office;
+ eid | ename | salary 
+-----+-------+--------
+(0 rows)
+
+finservdb=# select*from employee;
+ eid |  ename  | salary 
+-----+---------+--------
+ 103 | maruti  |   1000
+ 104 | koushiq |     80
+ 105 | rohit   |     80
+ 106 | jaideep |     90
+ 101 | krishna |     60
+(5 rows)
+
+finservdb=# delete from employee where ename='krishna';
+DELETE 1
+finservdb=# select*from employee;
+ eid |  ename  | salary 
+-----+---------+--------
+ 103 | maruti  |   1000
+ 104 | koushiq |     80
+ 105 | rohit   |     80
+ 106 | jaideep |     90
+(4 rows)
+
+finservdb=# update employee set salary=50  where salary='90';
+UPDATE 1
+finservdb=# select*from employee;
+ eid |  ename  | salary 
+-----+---------+--------
+ 103 | maruti  |   1000
+ 104 | koushiq |     80
+ 105 | rohit   |     80
+ 106 | jaideep |     50
+(4 rows)
+finservdb=# select INITCAP(ename) from employee;
+ initcap 
+---------
+ Maruti
+ Koushiq
+ Rohit
+ Jaideep
+(4 rows)
+
+finservdb=# select concat(eid,ename) from employee;
+   concat   
+------------
+ 103maruti
+ 104koushiq
+ 105rohit
+ 106jaideep
+(4 rows)
+
+finservdb=# update employee set ename=concat(ename);
+UPDATE 4
+finservdb=# select*from employee;
+ eid |  ename  | salary 
+-----+---------+--------
+ 103 | maruti  |   1000
+ 104 | koushiq |     80
+ 105 | rohit   |     80
+ 106 | jaideep |     50
+(4 rows)
+
+finservdb=# update employee set ename=initcap(ename);
+UPDATE 4
+finservdb=# select*from employee;
+ eid |  ename  | salary 
+-----+---------+--------
+ 103 | Maruti  |   1000
+ 104 | Koushiq |     80
+ 105 | Rohit   |     80
+ 106 | Jaideep |     50
+(4 rows)
+
+finservdb=# select count(*) from employee;
+ count 
+-------
+     4
+(1 row)
+finservdb=# select sum(salary) from employee;
+ sum  
+------
+ 1210
+(1 row)
+
+finservdb=# select avg(salary) from employee;
+  avg  
+-------
+ 302.5
+(1 row)
+
+finservdb=# select max(salary) from employee;
+ max  
+------
+ 1000
+(1 row)
+
+finservdb=# select min(salary) from employee;
+ min 
+-----
+  50
+(1 row)
+
+finservdb=# select count(eid),ename from employee group by ename;
+ count |  ename  
+-------+---------
+     1 | Koushiq
+     1 | Maruti
+     1 | Jaideep
+     1 | Rohit
+(4 rows)
+
+finservdb=# select count(salary),ename from employee group by ename;
+ count |  ename  
+-------+---------
+     1 | Koushiq
+     1 | Maruti
+     1 | Jaideep
+     1 | Rohit
+(4 rows)
+                           ^
+finservdb=# select count(ename),salary from employee group by salary;
+ count | salary 
+-------+--------
+     1 |   1000
+     2 |     80
+     1 |     50
+(3 rows)
+                       ^
+finservdb=# select salary from employee order by salary;
+ salary 
+--------
+     50
+     80
+     80
+   1000
+(4 rows)                                        ^
+finservdb=# select salary from employee order by salary asc;
+ salary 
+--------
+     50
+     80
+     80
+   1000
+(4 rows)
+
+finservdb=# select salary from employee order by salary desc;
+ salary 
+--------
+   1000
+     80
+     80
+     50
+(4 rows)
+
+finservdb=# select salary,ename from employee order by salary,ename desc;
+ salary |  ename  
+--------+---------
+     50 | Jaideep
+     80 | Rohit
+     80 | Koushiq
+   1000 | Maruti
+(4 rows)
+
+finservdb=# select salary,ename from employee order by salary,ename asc;
+ salary |  ename  
+--------+---------
+     50 | Jaideep
+     80 | Koushiq
+     80 | Rohit
+   1000 | Maruti
+(4 rows)
+
+finservdb=# \d
+          List of relations
+ Schema |   Name   | Type  |  Owner   
+--------+----------+-------+----------
+ public | employee | table | postgres
+ public | office   | table | postgres
+(2 rows)
+
+finservdb=# create table department(depid INT PRIMARY KEY NOT NULL,ename TEXT);
+CREATE TABLE
+finservdb=# \d
+           List of relations
+ Schema |    Name    | Type  |  Owner   
+--------+------------+-------+----------
+ public | department | table | postgres
+ public | employee   | table | postgres
+ public | office     | table | postgres
+(3 rows)
+                                        ^
+finservdb=# insert into department (depid,ename) values (1,'Jaideep'),(2,'Koushiq'),(3,'rohit'),(4,'hello');                    ^
+finservdb=# \d department
+             Table "public.department"
+ Column |  Type   | Collation | Nullable | Default 
+--------+---------+-----------+----------+---------
+ depid  | integer |           | not null | 
+ ename  | text    |           |          | 
+Indexes:
+    "department_pkey" PRIMARY KEY, btree (depid)
+
+finservdb=# select *  from department
+finservdb-# ;
+ depid |  ename  
+-------+---------
+     1 | Jaideep
+     2 | Koushiq
+     3 | rohit
+     4 | hello
+(4 rows)
+finservdb=# \d department
+             Table "public.department"
+ Column |  Type   | Collation | Nullable | Default 
+--------+---------+-----------+----------+---------
+ depid  | integer |           | not null | 
+ ename  | text    |           |          | 
+Indexes:
+    "department_pkey" PRIMARY KEY, btree (depid)
+
+finservdb=# \d employee
+              Table "public.employee"
+ Column |  Type   | Collation | Nullable | Default 
+--------+---------+-----------+----------+---------
+ eid    | integer |           | not null | 
+ ename  | text    |           | not null | 
+ salary | real    |           |          | 
+Indexes:
+    "employee_pkey" PRIMARY KEY, btree (eid)
+
+finservdb=# alter table employee add column depid INT;
+ALTER TABLE
+finservdb=# alter table employee add constraint depid FOREIGN KEY(depid) REFERENCES department(depid);
+ALTER TABLE
+finservdb=# \d employee
+              Table "public.employee"
+ Column |  Type   | Collation | Nullable | Default 
+--------+---------+-----------+----------+---------
+ eid    | integer |           | not null | 
+ ename  | text    |           | not null | 
+ salary | real    |           |          | 
+ depid  | integer |           |          | 
+Indexes:
+    "employee_pkey" PRIMARY KEY, btree (eid)
+Foreign-key constraints:
+    "depid" FOREIGN KEY (depid) REFERENCES department(depid)
+
+finservdb=# \d department
+             Table "public.department"
+ Column |  Type   | Collation | Nullable | Default 
+--------+---------+-----------+----------+---------
+ depid  | integer |           | not null | 
+ ename  | text    |           |          | 
+Indexes:
+    "department_pkey" PRIMARY KEY, btree (depid)
+Referenced by:
+    TABLE "employee" CONSTRAINT "depid" FOREIGN KEY (depid) REFERENCES department(depid)
+finservdb=# /d employee
+finservdb-# ;
+finservdb=# \d employee;
+              Table "public.employee"
+ Column |  Type   | Collation | Nullable | Default 
+--------+---------+-----------+----------+---------
+ eid    | integer |           | not null | 
+ ename  | text    |           | not null | 
+ salary | real    |           |          | 
+ depid  | integer |           |          | 
+Indexes:
+    "employee_pkey" PRIMARY KEY, btree (eid)
+Foreign-key constraints:
+    "depid" FOREIGN KEY (depid) REFERENCES department(depid)
+
+finservdb=# \d department
+             Table "public.department"
+ Column |  Type   | Collation | Nullable | Default 
+--------+---------+-----------+----------+---------
+ depid  | integer |           | not null | 
+ ename  | text    |           |          | 
+Indexes:
+    "department_pkey" PRIMARY KEY, btree (depid)
+Referenced by:
+    TABLE "employee" CONSTRAINT "depid" FOREIGN KEY (depid) REFERENCES department(depid)
+
+finservdb=# select depid from employee;
+ depid 
+-------
+(4 rows)
+
+finservdb=# select depid from department;
+ depid 
+-------
+     1
+     2
+     3
+     4
+(4 rows)
+               ^
+finservdb=# select depid, ename from employee department;
+ depid |  ename  
+-------+---------
+       | Maruti
+       | Koushiq
+       | Rohit
+       | Jaideep
+(4 rows)
+
+finservdb=# select depid, ename from department;
+ depid |  ename  
+-------+---------
+     1 | Jaideep
+     2 | Koushiq
+     3 | rohit
+     4 | hello
+(4 rows)
+finservdb=# select ename,depid from employee;
+  ename  | depid 
+---------+-------
+ Maruti  |      
+ Koushiq |      
+ Rohit   |      
+ Jaideep |      
+(4 rows)
+
+finservdb=# select ename,depid from employee emp;
+  ename  | depid 
+---------+-------
+ Maruti  |      
+ Koushiq |      
+ Rohit   |      
+ Jaideep |      
+(4 rows)
+
+finservdb=# select ename,depid from employee emp union select ename,depid from department dpt;
+  ename  | depid 
+---------+-------
+ Koushiq |     2
+ Jaideep |     1
+ Rohit   |      
+ hello   |     4
+ rohit   |     3
+ Koushiq |      
+ Jaideep |      
+ Maruti  |      
+(8 rows)
+
