@@ -22,7 +22,8 @@ public class Main {
         m.MultiCatchBlock();
 
         //merge file exception still to be done
-
+        MergeFileException merge=new MergeFileException();
+        merge.MergeFilesExceptionDemonstration();
         //implementing the throw 
         int age=10;
         try
@@ -54,7 +55,6 @@ public class Main {
 
         EmptyCartException empty=new EmptyCartException();
         empty.DisplayCart();
-        System.out.println(empty.ItemId.size());
 
 }
 }

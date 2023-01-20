@@ -2,7 +2,7 @@ package Day3_Java.collections;
 
 import java.util.Comparator;
 
-import Day2_Java.relations.*;;;
+import Day2_Java.relations.*;
 
 public class MyNameComparator implements Comparator <Employee>{
 

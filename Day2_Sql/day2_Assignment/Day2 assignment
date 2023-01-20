@@ -1,0 +1,104 @@
+Last login: Fri Jan 20 09:55:34 on ttys002
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+L-VYKJY6J12D:~ marutikameshwar$ /Library/PostgreSQL/15/scripts/runpsql.sh; exit
+Server [localhost]: 
+Database [postgres]: 
+Port [5432]: 
+Username [postgres]: 
+Password for user postgres: 
+psql (15.1)
+Type "help" for help.
+
+postgres=# Create database dphone_corporation;
+CREATE DATABASE
+postgres=# \l
+                                                 List of databases
+        Name        |  Owner   | Encoding | Collate | Ctype | ICU Locale | Locale Provider |   Access privileges   
+--------------------+----------+----------+---------+-------+------------+-----------------+-----------------------
+ dphone_corporation | postgres | UTF8     | C       | C     |            | libc            | 
+ finservdb          | postgres | UTF8     | C       | C     |            | libc            | 
+ postgres           | postgres | UTF8     | C       | C     |            | libc            | 
+ template0          | postgres | UTF8     | C       | C     |            | libc            | =c/postgres          +
+                    |          |          |         |       |            |                 | postgres=CTc/postgres
+ template1          | postgres | UTF8     | C       | C     |            | libc            | =c/postgres          +
+                    |          |          |         |       |            |                 | postgres=CTc/postgres
+(5 rows)
+
+postgres=# \c dphone_corporation;
+You are now connected to database "dphone_corporation" as user "postgres".
+dphone_corporation=# create table users(userid INT PRIMARY KEY NOT NULL,first_name TEXT NOT NULL,last_name TEXT NOT NULL ,address TEXT NOT NULL,mobile TEXT NOT NULL,email TEXT NOT NULL,username TEXT NOT NULL,password TEXT NOT NULL);
+CREATE TABLE
+dphone_corporation=# create table referral(referralid int not null unique,referral_first_name text not null,referral_last_name text not null,mobile text not null, email text not null,userid int not null, date_of_referral date not null, referral_points int, status text);
+CREATE TABLE
+dphone_corporation=# create table customer(customerid int primary key not null, first_name text not null, last_name text not null,email text not null,mobile text not null);
+CREATE TABLE
+dphone_corporation=# create table buyingdetails(customerid int not null,userid int , purchase_date date,product_name text not null);
+CREATE TABLE
+dphone_corporation=# alter table referral add foreign key(userid) references users(userid);
+ALTER TABLE
+dphone_corporation=# alter table buyingdetails add foreign key(customerid) references customer(customerid);
+ALTER TABLE
+dphone_corporation=# insert into users(userid,first_name,last_name,address,mobile,email,username,password) values (1,'maruti','kameshwar','mumbai','8186837509','marutikameshwar@gmail.com','marutikameshwar','maruti123'),(2,'rohit','vinta','vijaywada','9898765642','vintarohit@gmail.com','vinatrohit','rohit123'),(3,'jaideep','dutta','pune','9087956738','jaideepdutta@gmail.com','jaideepdutta','jaideep123'),(4,'koushiq','appani','vellore','7895342978','appanikoushiq@gmail.com','appanikoushiq','koushiq123'),(5,'krishna','dheeraj','hydrabad','9836748562','krishnadheeraj@gmail.com','krishnadheeraj','krishna123');
+INSERT 0 5
+dphone_corporation=# insert into referral values(101,'subrajit','das','9876789067','subrajit@gmail.com',1,'2020/01/14',1000,'accepted'),(102,'hariteja','narayana','9785603458','hariteja@gmail.com',2,'2020/05/2',0,'pending'),(103,'krish','mani','9876345687','krishmani@gmail.com',2,'2020/05/18',1000,'accepted'),(104,'virat','kohili','9876543098','kohili@gmail.com',5,'2021/08/22',0,'pending'),(105,'helios','harmony','9834512309','harmony@gmail.com',4,'2022/12/25',1000,'accepted');
+INSERT 0 5
+dphone_corporation=# insert into customer values(1001,'subrajit','das','subrajit@gmail.com','9876789067'),(1002,'romeo','fererra','romeofererra@gmail.com','9454545568'),(1003,'hooland','kin','hoola@gmail.com','9876543201'),(1004,'krish','mani','krishmani@gmail.com','9876345687'),(1005,'helios','harmony','harmony@gmail.com','9834512309');
+INSERT 0 5
+dphone_corporation=#  insert into buyingdetails(customerid,userid,purchase_date,product_name) values(1001,1,'2022/10/1','samasung s22'),(1002,null,'2021/02/22','one plus 10'),(1003,null,'2022/09/21','mi note 12'),(1004,1003,'2022/2/14','iphone 14'),(1005,105,'2023/1/13','realme narzo');
+INSERT 0 5
+dphone_corporation=# select userid,count(userid) from referral group by userid;
+ userid | count 
+--------+-------
+      5 |     1
+      4 |     1
+      2 |     2
+      1 |     1
+(4 rows)
+
+dphone_corporation=# select userid, sum(referral_points) from referral group by userid;
+ userid | sum  
+--------+------
+      5 |    0
+      4 | 1000
+      2 | 1000
+      1 | 1000
+(4 rows)
+
+dphone_corporation=# select first_name,last_name,mobile from customer where customerid=(select customerid from buyingdetails where purchase_date='2022/09/21');
+ first_name | last_name |   mobile   
+------------+-----------+------------
+ hooland    | kin       | 9876543201
+(1 row)
+
+dphone_corporation=# select * from customer where customerid=(select customerid from buyingdetails where product_name='iphone 14');
+ customerid | first_name | last_name |        email        |   mobile   
+------------+------------+-----------+---------------------+------------
+       1004 | krish      | mani      | krishmani@gmail.com | 9876345687
+(1 row)
+
+dphone_corporation=# create view userview as select first_name,last_name,mobile,email from users;
+CREATE VIEW
+dphone_corporation=# select * from userview order by email asc;
+ first_name | last_name |   mobile   |           email           
+------------+-----------+------------+---------------------------
+ koushiq    | appani    | 7895342978 | appanikoushiq@gmail.com
+ jaideep    | dutta     | 9087956738 | jaideepdutta@gmail.com
+ krishna    | dheeraj   | 9836748562 | krishnadheeraj@gmail.com
+ maruti     | kameshwar | 8186837509 | marutikameshwar@gmail.com
+ rohit      | vinta     | 9898765642 | vintarohit@gmail.com
+(5 rows)
+
+dphone_corporation=# select * from userview order by mobile desc;
+ first_name | last_name |   mobile   |           email           
+------------+-----------+------------+---------------------------
+ rohit      | vinta     | 9898765642 | vintarohit@gmail.com
+ krishna    | dheeraj   | 9836748562 | krishnadheeraj@gmail.com
+ jaideep    | dutta     | 9087956738 | jaideepdutta@gmail.com
+ maruti     | kameshwar | 8186837509 | marutikameshwar@gmail.com
+ koushiq    | appani    | 7895342978 | appanikoushiq@gmail.com
+(5 rows)
+
+dphone_corporation=# 
