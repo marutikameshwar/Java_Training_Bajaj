@@ -2,8 +2,8 @@ package Day4Java.StaticInterface;
 
 interface StaticInterface
 {
-    static void division()
+    static void division(int a,int b)
     {
-        System.out.println("inside the static method : "+100/10);
+        System.out.println("inside the static method which performs division: "+a/b);
     }
 }
